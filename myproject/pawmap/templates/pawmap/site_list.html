@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h1>お出かけスポットの一覧</h1>
+
+<!-- フィルタリングオプション -->
+<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+    <h6 style="margin: 0;">カテゴリを選択する：</h6>
+    <select id="categoryDropdown" style="height: 30px; font-size: 1rem;">
+        <option value="{% url 'pawmap:index' %}" {% if not current_category %}selected{% endif %}>すべて</option>
+        {% for category in categories %}
+            <option value="{% url 'pawmap:category_list' category.id %}" 
+                {% if current_category == category.id %}selected{% endif %}>
+                {{ category.name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <h6 style="margin: 0;">都道府県を選択する：</h6>
+    <select id="prefectureDropdown" style="height: 30px; font-size: 1rem;">
+        <option value="" {% if not current_prefecture %}selected{% endif %}>すべて</option>
+        {% for prefecture in prefectures %}
+            <option value="{{ prefecture }}" {% if current_prefecture == prefecture %}selected{% endif %}>
+                {{ prefecture }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button onclick="redirectToFiltered()">絞り込む</button>
+</div>
+
+<!-- 絞り込んだスポット一覧 -->
+<table class='table table-striped table-hover'>
+    <tr>
+        <th>カテゴリ</th>
+        <th>お出かけスポット</th>
+        <th>住所</th>
+    </tr>
+    {% for site in object_list %}
+    <tr>
+        <td>{{ site.category.name }}</td>
+        <td><a href='{% url "pawmap:detail" site.pk %}'>{{ site.name }}</a></td>
+        <td>{{ site.address }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<!-- 認証ユーザー向けのリンク -->
+{% if user.is_authenticated %}
+    <div>
+        <a href='{% url "pawmap:create" %}'>お出かけスポットを追加する</a>
+    </div>
+{% endif %}
+
+<!-- フィルタリングロジックのスクリプト -->
+<script>
+    function redirectToFiltered() {
+        const category = document.getElementById("categoryDropdown").value;
+        const prefecture = document.getElementById("prefectureDropdown").value;
+
+        // カテゴリのURLを基本に都道府県を追加
+        let url = category;
+        if (prefecture) {
+            url += "?prefecture=" + encodeURIComponent(prefecture);
+        }
+
+        // 絞り込み結果のURLにリダイレクト
+        window.location.href = url;
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>全体マップ（現在準備中です。今しばらくお待ちください。）</h1>
+
+<!-- マップを表示するためのdiv -->
+<div id="map" style="width: 100%; height: 600px;"></div>
+
+<!-- sites_addressesをJSON形式で埋め込む -->
+{{ sites_addresses|json_script:"sites_addresses" }}
+
+<script>
+  // Google Maps APIキー
+  const apiKey = "{{ google_maps_api_key }}";
+
+  // Djangoから渡されたsites_addressesを取得
+  const addresses = JSON.parse(document.getElementById('sites_addresses').textContent);
+
+  // Google Maps APIのGeocoderを使用して住所を座標に変換
+  function initMap() {
+    const map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 10, // 初期ズームレベル
+      center: { lat: 37.916, lng: 139.036 }, // 初期の中心座標（適宜設定）
+    });
+
+    const geocoder = new google.maps.Geocoder();
+    const markers = [];  // マーカーを保存する配列
+
+    // すべての住所に対してマーカーを追加
+    let geocodeCount = 0;
+    addresses.forEach((address) => {
+      geocoder.geocode({ address: address }, (results, status) => {
+        if (status === "OK") {
+          // マーカーをマップに追加
+          const marker = new google.maps.Marker({
+            map: map,
+            position: results[0].geometry.location,
+          });
+          markers.push(marker);  // マーカーを配列に追加
+          geocodeCount++;
+
+          // すべての住所が処理されてマーカーが追加されたら、マップを再調整
+          if (geocodeCount === addresses.length) {
+            // 全てのマーカーが追加されたら、マップの中心を調整
+            const bounds = new google.maps.LatLngBounds();
+            markers.forEach((marker) => {
+              bounds.extend(marker.getPosition());
+            });
+            map.fitBounds(bounds);  // マップの範囲を調整
+          }
+        } else {
+          console.error("Geocode was not successful for the following reason: " + status);
+        }
+      });
+    });
+  }
+</script>
+
+<!-- Google Maps JavaScript APIの読み込み -->
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" async defer></script>
+
+<div class="text-center mt-5">
+  <a href='{% url "pawmap:index" %}' class="btn btn-outline-primary">一覧に戻る</a>
+</div>
+{% endblock %}
+
+
+

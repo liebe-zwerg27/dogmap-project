@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h1>{{ site.name }}</h1>
+<div>
+    <p>{{ site.category.name }}</p>
+    <p>{{ site.address }}</p>
+</div>
+<iframe id="map"
+    src="https://www.google.com/maps/embed/v1/place?key={{ google_maps_api_key }}&amp;q={{ site.address }}"
+    width="100%"
+    height="320"
+    frameborder="0">
+</iframe>
+<div>
+    <a href='{% url "pawmap:index" %}'>一覧に戻る</a> 
+    {% if request.user.id == object.author_id %}   
+        | <a href='{% url "pawmap:update" site.pk %}'>編集する</a> 
+        | <a href='{% url "pawmap:delete" site.pk %}'>削除する</a>
+    {% endif %}
+</div>
+
+{% endblock %}

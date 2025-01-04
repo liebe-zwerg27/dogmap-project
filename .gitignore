@@ -1,0 +1,9 @@
+.venv
+docker
+__pycache__
+.env
+staticfiles
+db.sqlite3
+
+# macOS関連ファイル
+.DS_Store

@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center my-5">このサイトについて</h1>
+    <div class="row">
+        <div class="col-lg-12">
+            <p>
+                このサイトは、愛犬と一緒に訪れることができるスポットの情報を共有し、愛犬とのお出かけをより楽しいものにすることを目的としています。 全国のユーザーが情報を投稿・共有することで、あなたの愛犬にとって最適な場所を見つけるお手伝いをします。
+            </p>
+            <p>
+                掲載されている情報はユーザーが投稿したものです。必ずお出かけ前に公式情報や口コミを確認し、愛犬が安心して楽しめる環境かどうかをご確認ください。
+            </p>
+            <p>
+                このサイトを通じて、愛犬との素晴らしい時間をお楽しみください！
+            </p>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href='{% url "pawmap:index" %}' class="btn btn-outline-primary">一覧に戻る</a>
+    </div>
+</div>
+{% endblock %}
+
+
+
